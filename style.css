@@ -2,14 +2,15 @@
   --paper: #f4ebd8;
   --black: #332d35;
   --maroon: #6d496d;
-  --mint: #bbd9d0;
-  --pink: #f1c6b8;
+  --blue: #B2DBD8;
+  --pink: #f0d0c5;
   --yellow: #f7e7a9;
   --tan: #b8a995;
   --white: #fffaf0;
 }
 
 * {
+  cursor: none !important;
   box-sizing: border-box;
 }
 
@@ -87,7 +88,7 @@ img {
 .masthead {
   padding: 20px 12px 16px;
   text-align: center;
-  background: var(--mint);
+  background: var(--blue);
   border: 2px ridge #a3c3b8;
 }
 
@@ -150,6 +151,11 @@ img {
 
 .sidebar {
   background: #f7f0df;
+  position: sticky;
+  top: 14px;
+  align-self: start;
+  max-height: calc(100vh - 28px);
+  overflow-y: auto;
 }
 
 .content {
@@ -223,7 +229,7 @@ p {
 .note {
   margin: 14px 0;
   padding: 10px;
-  background: var(--mint);
+  background: var(--blue);
   border: 1px dashed #769a8e;
 }
 
@@ -363,5 +369,76 @@ code {
 
   .navigation {
     gap: 3px;
+  }
+}
+
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.custom-cursor img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 180ms ease;
+}
+
+.custom-cursor.hover img {
+  transform: scale(1.2);
+}
+
+.cursor-particles {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--particle-color);
+
+  box-shadow: 0 0 10px var(--particle-color);
+
+  pointer-events: none;
+  animation: particle-fade 2500ms ease-out forwards;
+}
+
+@keyframes particle-fade {
+  to {
+    opacity: 0;
+    transform: translate(
+      var(--drift-x),
+      var(--drift-y)
+    ) scale(0);
+  }
+}
+
+@media (pointer: coarse) {
+  .custom-cursor,
+  .cursor-particles {
+    display: none;
+  }
+
+  * {
+    cursor: auto !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .particle {
+    animation-duration: 150ms;
   }
 }
