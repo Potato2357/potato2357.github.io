@@ -4,6 +4,7 @@ const particle_layer = document.querySelector(".cursor-particles");
 
 const default_image = "./images/cursor-default.png";
 const hover_image = "./images/cursor-hover.png";
+const ibeam_image = "./images/cursor-ibeam.png";
 
 let mouseX = 0;
 let mouseY = 0;
@@ -90,6 +91,18 @@ document.querySelectorAll('img[onclick]')
         element.addEventListener("mouseleave", () => {
             cursor_image.src = default_image;
             cursor.classList.remove("hover");
+        });
+    });
+document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, [data-cursor-text]')
+    .forEach((element) => {
+        element.addEventListener("mouseenter", () => {
+            cursor_image.src = ibeam_image;
+            cursor.classList.add("text");
+        });
+
+        element.addEventListener("mouseleave", () => {
+            cursor_image.src = default_image;
+            cursor.classList.remove("text");
         });
     });
 
