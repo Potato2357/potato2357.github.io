@@ -300,7 +300,7 @@ p {
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
-  object-fit: cover;
+  object-fit: scale-down;
   border: 1px solid #b8aa96;
 }
 
