@@ -66,45 +66,124 @@ function create_particle(x, y) {
     });
 }
 
-// swap the image when hovering over interactive elements
-document.querySelectorAll('a, button, [data-cursor-hover]')
-    .forEach((element) => {
-        element.addEventListener("mouseenter", () => {
-            cursor_image.src = hover_image;
-            cursor.classList.add("hover");
-            show_particles = false;
-        });
+// ----------------------------------------------------------------------------
+// Cursor mode detection
 
-        element.addEventListener("mouseleave", () => {
-            cursor_image.src = default_image;
-            cursor.classList.remove("hover");
-            show_particles = true;
-        });
-    });
-document.querySelectorAll('img[onclick]')
-    .forEach((element) => {
-        element.addEventListener("mouseenter", () => {
-            cursor_image.src = hover_image;
-            cursor.classList.add("hover");
-        });
+const hoverSelector = 'a, button, [data-cursor-hover], img[onclick]';
+const textSelector = 'p, h1, h2, h3, h4, h5, h6, span, [data-cursor-text]';
 
-        element.addEventListener("mouseleave", () => {
-            cursor_image.src = default_image;
-            cursor.classList.remove("hover");
-        });
-    });
-document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, [data-cursor-text]')
-    .forEach((element) => {
-        element.addEventListener("mouseenter", () => {
-            cursor_image.src = ibeam_image;
-            cursor.classList.add("text");
-        });
+function getTextRangeAtPoint(x, y) {
 
-        element.addEventListener("mouseleave", () => {
-            cursor_image.src = default_image;
-            cursor.classList.remove("text");
-        });
-    });
+    if (document.caretPositionFromPoint) {
+        const position = document.caretPositionFromPoint(x, y);
+
+        if (position) {
+            const range = document.createRange();
+            range.setStart(position.offsetNode, position.offset);
+            range.collapse(true);
+            return range;
+        }
+    }
+
+    // fallback
+    if (document.caretRangeFromPoint) {
+        return document.caretRangeFromPoint(x, y);
+    }
+
+    return null;
+}
+
+function isOverText(x, y) {
+    const range = getTextRangeAtPoint(x, y);
+
+    if (!range || range.startContainer.nodeType !== Node.TEXT_NODE) {
+        return false;
+    }
+
+    const node = range.startContainer;
+    const text = node.textContent;
+    const offset = range.startOffset;
+
+    if (!text || !text.trim()) return false;
+
+    // change as needed
+    const tolerance = 5;
+
+    const start = Math.max(0, offset - 1);
+    const end = Math.min(text.length, offset + 2);
+
+    for (let i = start; i < end; i++) {
+        if (/\s/.test(text[i])) continue;
+
+        const charRange = document.createRange();
+        charRange.setStart(node, i);
+        charRange.setEnd(node, i + 1);
+
+        for (const rect of charRange.getClientRects()) {
+            const nearX = Math.max(rect.left, Math.min(x, rect.right));
+            const nearY = Math.max(rect.top, Math.min(y, rect.bottom));
+
+            const distance = Math.hypot(x - nearX, y - nearY);
+
+            if (distance <= tolerance) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+function isHoverTarget(target) {
+    return target instanceof Element && !!target.closest(hoverSelector);
+}
+
+function isTextTarget(target) {
+    return target instanceof Element && !!target.closest(textSelector);
+}
+
+let cursorMode = 'default';
+
+function setCursorMode(mode) {
+    if (cursorMode === mode) return;
+    cursorMode = mode;
+
+    cursor.classList.toggle('hover', mode === 'hover');
+    cursor.classList.toggle('text', mode === 'text');
+
+    if (mode === 'hover') {
+        cursor_image.src = hover_image;
+        show_particles = false;
+    } else if (mode === 'text') {
+        cursor_image.src = ibeam_image;
+        show_particles = true;
+    } else {
+        cursor_image.src = default_image;
+        show_particles = true;
+    }
+}
+
+document.addEventListener('mousemove', (event) => {
+    const target = document.elementFromPoint(
+        event.clientX,
+        event.clientY
+    );
+
+    if (isHoverTarget(target)) {
+        setCursorMode('hover');
+        return;
+    }
+
+    if (
+        isTextTarget(target) &&
+        isOverText(event.clientX, event.clientY)
+    ) {
+        setCursorMode('text');
+        return;
+    }
+
+    setCursorMode('default');
+});
 
 // ----------------------------------------------------------------------------
 
