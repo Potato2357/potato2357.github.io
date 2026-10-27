@@ -70,7 +70,7 @@ function create_particle(x, y) {
 // Cursor mode detection
 
 const hoverSelector = 'a, button, [data-cursor-hover], img[onclick]';
-const textSelector = 'p, h1, h2, h3, h4, h5, h6, span, [data-cursor-text]';
+const textSelector = 'p, strong, h1, h2, h3, h4, h5, h6, span, [data-cursor-text]';
 
 function getTextRangeAtPoint(x, y) {
 

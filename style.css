@@ -289,14 +289,22 @@ p {
   gap: 12px;
 }
 
-.gallery figure {
+.gallery_s {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.gallery figure,
+.gallery_s figure {
   margin: 0;
   padding: 8px;
   background: #f5ecd9;
   border: 1px solid var(--tan);
 }
 
-.gallery img {
+.gallery img,
+.gallery_s img {
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
@@ -304,7 +312,8 @@ p {
   border: 1px solid #b8aa96;
 }
 
-.gallery img.expanded {
+.gallery img.expanded,
+.gallery_s img.expanded {
   position: fixed;
   inset: 0;
   width: 100vw;
@@ -317,7 +326,8 @@ p {
   background: rgba(0, 0, 0, 0.4);
 }
 
-.gallery figcaption {
+.gallery figcaption,
+.gallery_s figcaption {
   padding-top: 7px;
   font-size: 12px;
 }
@@ -363,7 +373,8 @@ code {
     order: 1;
   }
 
-  .gallery {
+  .gallery,
+  .gallery_s {
     grid-template-columns: 1fr;
   }
 
